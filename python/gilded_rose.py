@@ -6,41 +6,23 @@ class GildedRose(object):
         self.items = items
 
     def update_quality(self):
-        for item in self.items:
-            if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-                if item.quality > 0:
-                    if item.name != "Sulfuras, Hand of Ragnaros":
-                        if "Conjured" in item.name:
-                            item.quality = item.quality -2
-                        else:
-                            item.quality = item.quality - 1
-            else:
-                if item.quality < 50:
+        item_values={"+5 Dexterity Vest": [1,1] , "Aged Brie":[-1,1] , "Elixir of the Mongoose":[1,1] , "Sulfuras, Hand of Ragnaros":[0,0] , "Backstage passes to a TAFKAL80ETC concert":[0,1], "Conjured Mana Cake":[2,1]}        
+        for item in self.items:      
+            item.quality = item.quality - item_values[item.name][0]                      
+            if item.quality < 50 and item.name == "Backstage passes to a TAFKAL80ETC concert":
+                item.quality = item.quality + 1                
+                if item.sell_in <= 10 and item.quality < 50:
                     item.quality = item.quality + 1
-                    if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                        if item.sell_in < 11:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-                        if item.sell_in < 6:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-            if item.name != "Sulfuras, Hand of Ragnaros":
-                item.sell_in = item.sell_in - 1
-            if item.sell_in < 0:
-                if item.name != "Aged Brie":
-                    if item.name != "Backstage passes to a TAFKAL80ETC concert":
-                        if item.quality > 0:
-                            if item.name != "Sulfuras, Hand of Ragnaros":
-                                if "Conjured" in item.name:
-                                    item.quality = item.quality - 2
-                                else:
-                                    item.quality = item.quality - 1
-                    else:
-                        item.quality = item.quality - item.quality
-                else:
-                    if item.quality < 50:
-                        item.quality = item.quality + 1
-
+                if item.sell_in <= 5 and item.quality < 50:
+                    item.quality = item.quality + 1          
+            if item.sell_in <= 0 and item.name == "Aged Brie":
+                if item.quality < 50:
+                    item.quality = item.quality + 1 
+                else: 
+                    item.quality = 50              
+            elif item.sell_in <= 0 and not "Sulfuras" in item.name:
+                item.quality = 0                         
+            item.sell_in = item.sell_in - item_values[item.name][1]                                                             
 
 class Item:
     def __init__(self, name, sell_in, quality):
